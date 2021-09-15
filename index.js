@@ -4,6 +4,8 @@ const ytdl = require("ytdl-core");
 const ytsh = require("yt-search");
 require("dotenv").config();
 const client = new Discord.Client();
+const express = require("express");
+const app = express();
 
 const queue = new Map();
 
@@ -198,3 +200,10 @@ function play(guild, song) {
 }
 
 client.login(process.env.token);
+
+app.get("/", (req, res) => {
+  res.send(true);
+});
+app.listen(process.env.PORT, () => {
+  console.log("server online");
+});
