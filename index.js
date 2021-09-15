@@ -4,6 +4,8 @@ const ytdl = require("ytdl-core");
 const ytsh = require("yt-search");
 require("dotenv").config();
 const client = new Discord.Client();
+const express = require("express");
+const app = express();
 
 const queue = new Map();
 
@@ -25,9 +27,7 @@ client.on("message", async (message) => {
 
   const serverQueue = queue.get(message.guild.id);
 
-  if (
-    message.content.startsWith(`${prefix}play`)
-  ) {
+  if (message.content.startsWith(`${prefix}play`)) {
     execute(message, serverQueue);
     return;
   } else if (message.content.startsWith(`${prefix}skip`)) {
@@ -198,3 +198,9 @@ function play(guild, song) {
 }
 
 client.login(process.env.token);
+app.get("/", (req, res) => {
+  res.send(true);
+});
+app.listen(process.env.PORT, () => {
+  console.log("server online");
+});
