@@ -55,7 +55,7 @@ client.on("message", async (message) => {
     queueList(message, serverQueue);
     return;
   } else {
-    message.channel.send("You need to enter a valid command!");
+    message.channel.send("You need to enter a valid command!!");
   }
 });
 
