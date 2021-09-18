@@ -25,23 +25,27 @@ client.on("message", async (message) => {
   if (message.author.bot) return;
   if (!message.content.startsWith(prefix)) return;
 
-  const serverQueue = queue.get(message.guild.id);
+  const serverQueue = await queue.get(message.guild.id);
 
   if (
-    message.content.startsWith(`${prefix}play`)
+    message.content.startsWith(`${prefix}p `) ||
+    message.content.startsWith(`${prefix}play `)
   ) {
     execute(message, serverQueue);
     return;
   } else if (message.content.startsWith(`${prefix}skip`)) {
     skip(message, serverQueue);
     return;
-  } else if (message.content.startsWith(`${prefix}pause`)) {
+  } else if (
+    message.content.startsWith(`${prefix}pause `) ||
+    message.content === `${prefix}p`
+  ) {
     pause(message, serverQueue);
     return;
   } else if (message.content.startsWith(`${prefix}resume`)) {
     resume(message, serverQueue);
     return;
-  } else if (message.content.startsWith(`${prefix}stop`)) {
+  } else if (message.content.startsWith(`${prefix}dc`)) {
     stop(message, serverQueue);
     return;
   } else if (
@@ -73,6 +77,7 @@ async function execute(message, serverQueue) {
   let song;
   if (ytdl.validateURL(args[1])) {
     const songInfo = await ytdl.getInfo(args[1]);
+    if (songInfo === null) return message.channel.send("Song cannot be added!");
     song = {
       title: songInfo.title,
       url: songInfo.video_url,
