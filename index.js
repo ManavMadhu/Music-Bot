@@ -76,7 +76,7 @@ async function execute(message, serverQueue) {
   const permissions = voiceChannel.permissionsFor(message.client.user);
   if (!permissions.has("CONNECT") || !permissions.has("SPEAK")) {
     return message.channel.send(
-      "I need the permissions to join and speak in your voice channel!"
+      "I need the permissions to join and speak in your voice channel!!"
     );
   }
 
