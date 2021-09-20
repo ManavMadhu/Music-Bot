@@ -37,10 +37,16 @@ client.on("message", async (message) => {
     skip(message, serverQueue);
     return;
   } else if (
-    message.content.startsWith(`${prefix}pause `) ||
+    message.content.startsWith(`${prefix}pause`) ||
     message.content === `${prefix}p`
   ) {
     pause(message, serverQueue);
+    return;
+  } else if (
+    message.content.startsWith(`${prefix}remove`) ||
+    message.content.startsWith(`${prefix}r`)
+  ) {
+    removeSong(message, serverQueue);
     return;
   } else if (message.content.startsWith(`${prefix}resume`)) {
     resume(message, serverQueue);
@@ -137,6 +143,28 @@ function queueList(message, serverQueue) {
     // queueText = JSON.parse(queueText);
     return message.channel.send(queueText);
     //console.log(serverQueue.songs);
+  }
+}
+
+function removeSong(message, serverQueue) {
+  if (!message.member.voice.channel)
+    return message.channel.send(
+      "You have to be in a voice channel to remove the song!"
+    );
+  if (!serverQueue.songs)
+    return message.channel.send("There is no song in the List!");
+  else {
+    let num = message.content.replace(/[^0-9]/g, "");
+    if (!num) return message.channel.send("Enter a Valid Number!");
+    //console.log(num);
+    let index = parseInt(num) - 1;
+    message.channel.send(
+      `${serverQueue.songs[index].title} has been removed from the queue!`
+    );
+    if (index > -1) {
+      serverQueue.songs.splice(index, 1);
+      console.log(serverQueue.songs);
+    }
   }
 }
 
