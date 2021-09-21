@@ -6,6 +6,7 @@ require("dotenv").config();
 const client = new Discord.Client();
 const express = require("express");
 const app = express();
+const path = require('path');
 
 const queue = new Map();
 
@@ -233,10 +234,11 @@ function play(guild, song) {
 }
 
 client.login(process.env.token);
-
+// app.set("view engine", "html");
 app.get("/", (req, res) => {
-  res.send(true);
+  //res.send(true);
+  res.sendFile(path.join(__dirname+'/frontend.html'));
 });
-app.listen(process.env.PORT, () => {
+app.listen(process.env.PORT || 3000, () => {
   console.log("server online");
 });
