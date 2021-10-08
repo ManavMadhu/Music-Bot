@@ -6,7 +6,7 @@ require("dotenv").config();
 const client = new Discord.Client();
 const express = require("express");
 const app = express();
-const path = require('path');
+const path = require("path");
 
 const queue = new Map();
 
@@ -37,6 +37,9 @@ client.on("message", async (message) => {
   } else if (message.content.startsWith(`${prefix}skip`)) {
     skip(message, serverQueue);
     return;
+  } else if (message.content.startsWith(`${prefix}help`)) {
+    help(message);
+    return;
   } else if (
     message.content.startsWith(`${prefix}pause`) ||
     message.content === `${prefix}p`
@@ -45,7 +48,7 @@ client.on("message", async (message) => {
     return;
   } else if (
     message.content.startsWith(`${prefix}remove`) ||
-    message.content.startsWith(`${prefix}r`)
+    message.content.startsWith(`${prefix}r `)
   ) {
     removeSong(message, serverQueue);
     return;
@@ -84,19 +87,24 @@ async function execute(message, serverQueue) {
   let song;
   if (ytdl.validateURL(args[1])) {
     const songInfo = await ytdl.getInfo(args[1]);
-    if (songInfo === null) return message.channel.send("Song cannot be added!");
+    //console.log(args[1]);
+    //console.log(songInfo.videoDetails.title);
+    //if (songInfo === null) return message.channel.send("Song cannot be added!");
     song = {
-      title: songInfo.title,
-      url: songInfo.video_url,
+      title: songInfo.videoDetails.title,
+      url: args[1],
     };
   } else {
     const { videos } = await ytsh(args.slice(1).join(" "));
+    //console.log(videos);
     if (!videos.length) return message.channel.send("No songs were found!");
     song = {
       title: videos[0].title,
       url: videos[0].url,
     };
   }
+
+  console.log(song);
 
   if (!serverQueue) {
     const queueContruct = {
@@ -125,6 +133,14 @@ async function execute(message, serverQueue) {
     serverQueue.songs.push(song);
     return message.channel.send(`${song.title} has been added to the queue!`);
   }
+}
+
+function help(message) {
+  const botInfo = new Discord.MessageEmbed().setDescription(
+    "You can see the commands [here!](https://music-bot-110.herokuapp.com/)"
+  );
+
+  message.channel.send(botInfo);
 }
 
 function queueList(message, serverQueue) {
@@ -237,7 +253,7 @@ client.login(process.env.token);
 // app.set("view engine", "html");
 app.get("/", (req, res) => {
   //res.send(true);
-  res.sendFile(path.join(__dirname+'/frontend.html'));
+  res.sendFile(path.join(__dirname + "/frontend.html"));
 });
 app.listen(process.env.PORT || 3000, () => {
   console.log("server online");
